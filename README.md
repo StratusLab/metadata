@@ -1,6 +1,8 @@
 Metadata
 ========
 
+[![Build Status](https://secure.travis-ci.org/StratusLab/metadata.png)](https://secure.travis-ci.org/StratusLab/metadata.png)
+
 Contains the utilities for the creation and verification of virtual
 machine metadata.  These metadata descriptions are managed through the
 Marketplace and used by various cloud services to validate, authorize,
