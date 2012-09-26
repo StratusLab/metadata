@@ -21,33 +21,16 @@ and configure the associated images.
 
   <packaging>jar</packaging>
 
-  <properties>
-    <package.os>fc14</package.os>
-    <nexus.release.repository.name>fedora-14-releases</nexus.release.repository.name>
-    <nexus.snapshot.repository.name>fedora-14-snapshots</nexus.snapshot.repository.name>
-  </properties>
-
-  <licenses>
-    <license>
-      <name>Apache 2</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-    </license>
-  </licenses>
-
-  <organization>
-    <name>StratusLab</name>
-    <url>http://stratuslab.eu/</url>
-  </organization>
+  <parent>
+    <groupId>eu.stratuslab</groupId>
+    <artifactId>distribution</artifactId>
+    <version>2.1-SNAPSHOT</version>
+  </parent>
 
   <issueManagement>
     <system>GitHub Issues</system>
     <url>https://github.com/StratusLab/metadata/issues</url>
   </issueManagement>
-
-  <ciManagement>
-    <system>Hudson</system>
-    <url>http://hudson.stratuslab.eu:8080/</url>
-  </ciManagement>
 
   <scm>
     <connection>scm:git:ssh://git@github.com/StratusLab/metadata.git</connection>
@@ -55,173 +38,58 @@ and configure the associated images.
   </scm>
 
   <repositories>
+
     <repository>
       <releases>
 	<enabled>true</enabled>
-	<updatePolicy>always</updatePolicy>
-	<checksumPolicy>fail</checksumPolicy>
       </releases>
       <snapshots>
 	<enabled>false</enabled>
-	<updatePolicy>never</updatePolicy>
-	<checksumPolicy>fail</checksumPolicy>
       </snapshots>
-      <id>StratusLabReleases</id>
-      <name>StratusLab Releases</name>
-      <url>http://repo.stratuslab.eu:8081/content/repositories/${nexus.release.repository.name}</url>
-      <layout>default</layout>
+      <id>POMReleases</id>
+      <name>POM Releases</name>
+      <url>http://repo.stratuslab.eu:8081/content/repositories/releases</url>
     </repository>
 
     <repository>
-      <id>openrdf</id>
-      <name>Public online sesame repository</name>                  
-      <url>http://repo.aduna-software.org/maven2/releases</url>
+      <releases>
+	<enabled>false</enabled>
+      </releases>
+      <snapshots>
+	<enabled>true</enabled>
+      </snapshots>
+      <id>POMSnapshots</id>
+      <name>POM Snapshots</name>
+      <url>http://repo.stratuslab.eu:8081/content/repositories/snapshots</url>
     </repository>
-    
+
   </repositories>
-
-  <distributionManagement>
-    <repository>
-      <id>stratuslab.releases</id>
-      <name>Releases</name>
-      <url>http://repo.stratuslab.eu:8081/content/repositories/${nexus.release.repository.name}</url>
-    </repository>
-    <snapshotRepository>
-      <id>stratuslab.snapshots</id>
-      <name>Snapshots</name>
-      <url>http://repo.stratuslab.eu:8081/content/repositories/${nexus.snapshot.repository.name}</url>
-    </snapshotRepository>
-    <site>
-      <id>hudson.webserver</id>
-      <url>scp://hudson.stratuslab.eu/var/www/one</url>
-    </site>
-  </distributionManagement>
 
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.10</version>
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk16</artifactId>
-      <version>1.46</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>javax.mail</groupId>
       <artifactId>mail</artifactId>
-      <version>1.4.1</version>
     </dependency>
     <dependency>
       <groupId>org.openrdf.sesame</groupId>
       <artifactId>sesame-rio-rdfxml</artifactId>
-      <version>2.6.9</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
-      <version>1.6.1</version>
     </dependency>
   </dependencies>
 
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>findbugs-maven-plugin</artifactId>
-        <version>2.4.0</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.8</version>
-        <configuration>
-          <show>public</show>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
-  
   <build>
-
-    <pluginManagement>
-      <plugins>
-	<plugin>
-	  <groupId>org.apache.maven.plugins</groupId>
-	  <artifactId>maven-clean-plugin</artifactId>
-	  <version>2.4.1</version>
-	</plugin>
-	<plugin>
-	  <groupId>org.apache.maven.plugins</groupId>
-	  <artifactId>maven-deploy-plugin</artifactId>
-	  <version>2.7</version>
-	</plugin>
-	<plugin>
-	  <groupId>org.apache.maven.plugins</groupId>
-	  <artifactId>maven-dependency-plugin</artifactId>
-	  <version>2.4</version>
-	</plugin>
-	<plugin>
-	  <groupId>org.apache.maven.plugins</groupId>
-	  <artifactId>maven-install-plugin</artifactId>
-	  <version>2.3.1</version>
-	</plugin>
-	<plugin>
-	  <groupId>org.apache.maven.plugins</groupId>
-	  <artifactId>maven-jar-plugin</artifactId>
-	  <version>2.3.2</version>
-	</plugin>
-	<plugin>
-	  <groupId>org.apache.maven.plugins</groupId>
-	  <artifactId>maven-resources-plugin</artifactId>
-	  <version>2.5</version>
-	  <configuration>
-	    <encoding>UTF-8</encoding>
-	  </configuration>
-	</plugin>
-	<plugin>
-	  <groupId>org.apache.maven.plugins</groupId>
-	  <artifactId>maven-site-plugin</artifactId>
-	  <version>3.0</version>
-	</plugin>
-	<plugin>
-	  <groupId>org.apache.maven.plugins</groupId>
-	  <artifactId>maven-surefire-plugin</artifactId>
-	  <version>2.11</version>
-	</plugin>
-	<plugin>
-	  <groupId>org.apache.maven.plugins</groupId>
-	  <artifactId>maven-compiler-plugin</artifactId>
-	  <version>2.3.2</version>
-	  <configuration>
-	    <encoding>UTF-8</encoding>
-	    <target>1.5</target>
-	    <source>1.5</source>
-	  </configuration>
-	</plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-javadoc-plugin</artifactId>
-          <version>2.8</version>
-	  <configuration>
-	    <encoding>UTF-8</encoding>
-	  </configuration>
-        </plugin>
-	<plugin>
-	  <groupId>org.apache.maven.plugins</groupId>
-	  <artifactId>maven-assembly-plugin</artifactId>
-	  <version>2.2.2</version>
-	</plugin>
-	<plugin>
-	  <groupId>org.codehaus.mojo</groupId>
-	  <artifactId>findbugs-maven-plugin</artifactId>
-	  <version>2.4.0</version>
-	</plugin>
-      </plugins>
-
-    </pluginManagement>
 
     <plugins>
 
