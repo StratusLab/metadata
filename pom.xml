@@ -4,7 +4,7 @@
 
   <groupId>eu.stratuslab.metadata</groupId>
   <artifactId>metadata</artifactId>
-  <version>3.1-SNAPSHOT</version>
+  <version>3.1</version>
   <name>Metadata (JAR)</name>
 
   <url>https://github.com/StratusLab/metadata</url>
