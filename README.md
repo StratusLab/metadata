@@ -15,10 +15,35 @@ Sharing machine and disk images requires standardized, trusted metadata to
 allow users to find appropriate images and to allow system administrators to
 judge the suitability of them.
 
-The metadata descriptions are in [RDF/XML][rdfxml] format and
+The metadata descriptions are in [RDF/XML format][rdfxml] and
 cryptographically signed following the [XML Signature][xmlsig] specification.
 The connection between the described image and the metadata description is the
-image identifier based on the SHA-1 hash.
+image identifier based on the SHA-1 hash. The following table shows the XML
+namespaces (and usual prefixes) in the metadata descriptions.
+
+<table>
+    <tr>
+        <th>Prefix</th>
+        <th>Namespace</th>
+    </tr>
+    <tr>
+        <td>rdf</td>
+        <td>http://www.w3.org/1999/02/22-rdf-syntax-ns#</td>
+    </tr>
+    <tr>
+        <td>dcterms</td>
+        <td>http://purl.org/dc/terms/</td>
+    </tr>
+    <tr>
+        <td>slreq</td>
+        <td>http://mp.stratuslab.eu/slreq#</td>
+    </tr>
+    <tr>
+        <td>slterms</td>
+        <td>http://mp.stratuslab.eu/slterms# </td>
+    </tr>
+</table>
+
 
 The following XML document is an unsigned example of the metadata description.
 The first element is the description of the image containing information about
@@ -94,28 +119,6 @@ metadata entries. (Relevant XML namespaces are given below.)
 </rdf:RDF>
 ```
 
-<table>
-    <th>
-        <td>Prefix</td>
-        <td>Namespace</td>
-    </th>
-    <tr>
-        <td>rdf</td>
-        <td>http://www.w3.org/1999/02/22-rdf-syntax-ns#</td>
-    </tr>
-    <tr>
-        <td>dcterms</td>
-        <td>http://purl.org/dc/terms/</td>
-    </tr>
-    <tr>
-        <td>slreq</td>
-        <td>http://mp.stratuslab.eu/slreq#</td>
-    </tr>
-    <tr>
-        <td>slterms</td>
-        <td>http://mp.stratuslab.eu/slterms# </td>
-    </tr>
-</table>
 
 The entries in the Marketplace deal with individual images. If it is desired
 that collections of images are signed, then one possibility is to include in
@@ -145,12 +148,182 @@ Where possible the [Dublin Core metadata vocabulary][dublincore] has been used
 for the metadata description. The following table shows the terms taken from
 the Dublin Core specification.
 
-|||
+<table>
+    <tr>
+        <th>NS</th>
+        <th>qname</th>
+        <th>freq.</th>
+        <th>XSD></th>
+        <th>Constraints</th>
+        <th>Notes</th>
+    </tr>
+    <tr>
+        <td>dcterms</td>
+        <td>identifier</td>
+        <td>1</td>
+        <td>string</td>
+        <td>valid identifier</td>
+        <td>image identifier</td>
+    </tr>
+    <tr>
+        <td>dcterms</td>
+        <td>isReplacedBy</td>
+        <td>?</td>
+        <td>string</td>
+        <td>valid identifier</td>
+        <td>image identifier for replacement image</td>
+    </tr>
+    <tr>
+        <td>dcterms</td>
+        <td>replaces</td>
+        <td>?</td>
+        <td>string</td>
+        <td>valid identifier</td>
+        <td>image identifier for image replaced by this one</td>
+    </tr>
+    <tr>
+        <td>dcterms</td>
+        <td>isVersionOf</td>
+        <td>?</td>
+        <td>string</td>
+        <td>valid identifier</td>
+        <td>image identifier for parent image</td>
+    </tr>
+    <tr>
+        <td>dcterms</td>
+        <td>valid</td>
+        <td>?</td>
+        <td>dateTime</td>
+        <td>XML DateTime format</td>
+        <td>expiration date for image metadata</td>
+    </tr>
+    <tr>
+        <td>dcterms</td>
+        <td>title</td>
+        <td>?</td>
+        <td>string</td>
+        <td></td>
+        <td>short title for humans</td>
+    </tr>
+    <tr>
+        <td>dcterms</td>
+        <td>description</td>
+        <td>1</td>
+        <td>string</td>
+        <td></td>
+        <td>longer description of the image</td>
+    </tr>
+    <tr>
+        <td>dcterms</td>
+        <td>type</td>
+        <td>1</td>
+        <td>string</td>
+        <td>'machine' or 'disk'</td>
+        <td>type of the described image</td>
+    </tr>
+    <tr>
+        <td>dcterms</td>
+        <td>creator</td>
+        <td>?</td>
+        <td>string</td>
+        <td></td>
+        <td>name of image or metadata record creator</td>
+    </tr>
+    <tr>
+        <td>dcterms</td>
+        <td>created</td>
+        <td>?</td>
+        <td>dateTime</td>
+        <td>XML DateTime format</td>
+        <td>date when metadata record was created</td>
+    </tr>
+    <tr>
+        <td>dcterms</td>
+        <td>publisher</td>
+        <td>?</td>
+        <td>string</td>
+        <td></td>
+        <td>publisher (group, experiment, project) of image</td>
+    </tr>
+    <tr>
+        <td>dcterms</td>
+        <td>format</td>
+        <td>1</td>
+        <td>string</td>
+        <td></td>
+        <td>format of machine or disk image</td>
+    </tr>
+</table>
 
 Additional terms have been defined by StratusLab to complete the metadata
 description. The following table shows those terms.
 
-|||
+<table>
+    <tr>
+        <th>NS</th>
+        <th>qname</th>
+        <th>freq.</th>
+        <th>XSD></th>
+        <th>Constraints</th>
+        <th>Notes</th>
+    </tr>
+    <tr>
+        <td>slreq</td>
+        <td>endorsement</td>
+        <td>1</td>
+        <td>complex</td>
+        <td></td>
+        <td>endorsement information</td>
+    </tr>
+    <tr>
+        <td>slreq</td>
+        <td>endorser</td>
+        <td>1</td>
+        <td>complex</td>
+        <td></td>
+        <td>endorser information</td>
+    </tr>
+    <tr>
+        <td>slreq</td>
+        <td>bytes</td>
+        <td>1</td>
+        <td>positive integer</td>
+        <td></td>
+        <td>number of bytes in described image</td>
+    </tr>
+    <tr>
+        <td>slreq</td>
+        <td>checksum</td>
+        <td>+</td>
+        <td>string</td>
+        <td>lowercase hex digits only</td>
+        <td>checksum in hex with algorithm prefix</td>
+    </tr>
+    <tr>
+        <td>slreq</td>
+        <td>email</td>
+        <td>1</td>
+        <td>string</td>
+        <td></td>
+        <td>email address of the metadata record creator</td>
+    </tr>
+    <tr>
+        <td>slreq</td>
+        <td>subject</td>
+        <td>1</td>
+        <td>string</td>
+        <td></td>
+        <td>certificate subject</td>
+    </tr>
+    <tr>
+        <td>slreq</td>
+        <td>issuer</td>
+        <td>+</td>
+        <td>string</td>
+        <td></td>
+        <td>certificate issuer</td>
+    </tr>
+</table>
 
 Additional terms can be added to the metadata descriptions, but they should
 appear in their own XML namespaces. This allows for application-specific
@@ -183,5 +356,6 @@ Grant Agreement INFSO-RI-261552 and that ran from June 2010 to May
 
 [rdfxml]: http://www.w3.org/TR/2004/ REC-rdf-syntax-grammar-20040210/
 [xmlsig]: http://www.w3.org/TR/2008/REC-xmldsig-core-20080610/
+[dublincore]: http://dublincore.org/documents/2010/10/11/dcmi-terms/
 
 
