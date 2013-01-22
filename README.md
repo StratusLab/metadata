@@ -443,7 +443,7 @@ by the European Community’s Seventh Framework Programme (Capacities)
 Grant Agreement INFSO-RI-261552 and that ran from June 2010 to May
 2012.
 
-[rdfxml]: http://www.w3.org/TR/2004/ REC-rdf-syntax-grammar-20040210/
+[rdfxml]: http://www.w3.org/TR/2004/REC-rdf-syntax-grammar-20040210/
 [xmlsig]: http://www.w3.org/TR/2008/REC-xmldsig-core-20080610/
 [dublincore]: http://dublincore.org/documents/2010/10/11/dcmi-terms/
 
