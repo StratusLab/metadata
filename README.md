@@ -8,6 +8,156 @@ machine metadata.  These metadata descriptions are managed through the
 Marketplace and used by various cloud services to validate, authorize,
 and configure the associated images.
 
+Metadata Schema and Format
+--------------------------
+
+Sharing machine and disk images requires standardized, trusted metadata to
+allow users to find appropriate images and to allow system administrators to
+judge the suitability of them.
+
+The metadata descriptions are in [RDF/XML][rdfxml] format and
+cryptographically signed following the [XML Signature][xmlsig] specification.
+The connection between the described image and the metadata description is the
+image identifier based on the SHA-1 hash.
+
+The following XML document is an unsigned example of the metadata description.
+The first element is the description of the image containing information about
+the image file, contained operating system, and location. It also contains the
+endorsement of the information with information on who endorsed the image and
+when. The email of the endorser is used as the key and is consequently a
+required element of the description. A digital signature element
+("xmldsig:Signature") follows the "rdf:Description" element for signed
+metadata entries. (Relevant XML namespaces are given below.)
+
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:dcterms="http://purl.org/dc/terms/"
+         xmlns:slreq="http://mp.stratuslab.eu/slreq#"
+         xmlns:slterms="http://mp.stratuslab.eu/slterms#"
+         xmlns:ex="http://example.org/"
+         xml:base="http://mp.stratuslab.eu/">
+
+  <rdf:Description rdf:about="#MMZu9WvwKIro-rtBQfDk4PsKO7_">
+    <dcterms:identifier>MMZu9WvwKIro-rtBQfDk4PsKO7_</dcterms:identifier>
+    <slreq:bytes>100</slreq:bytes>
+
+    <slreq:checksum rdf:parseType="Resource">
+      <slreq:algorithm>SHA-1</slreq:algorithm>
+      <slreq:value>c319bbd5afc0a22ba3eaed0507c39383ec28eeff</slreq:value>
+    </slreq:checksum>
+
+    <slreq:endorsement rdf:parseType="Resource">
+      <dcterms:created>2011-01-24T09:59:42Z</dcterms:created>
+      <slreq:endorser rdf:parseType="Resource">
+        <slreq:email>jane.tester@example.org</slreq:email>
+        <slreq:subject>CN=Jane Tester,OU=...</slreq:subject>
+        <slreq:issuer>CN=Jane Tester,OU=...</slreq:issuer>
+      </slreq:endorser>
+    </slreq:endorsement>
+
+    <dcterms:type>machine</dcterms:type>
+
+    <dcterms:valid>2011-07-23T10:59:42Z</dcterms:valid>
+
+    <dcterms:publisher>StratusLab</dcterms:publisher>
+    <dcterms:title>linux-with-my-apps</dcterms:title>
+    <dcterms:description>A 32-bit ttylinux...</dcterms:description>
+
+    <slterms:location>http://example.org/...</slterms:location>
+
+    <slterms:serial-number>0</slterms:serial-number>
+    <slterms:version>1.0</slterms:version>
+
+    <slterms:hypervisor>kvm</slterms:hypervisor>
+
+    <slterms:inbound-port>443</slterms:inbound-port>
+    <slterms:outbound-port>25</slterms:outbound-port>
+    <slterms:icmp>8</slterms:icmp>
+
+    <slterms:os>ttylinux</slterms:os>
+    <slterms:os-version>9.7</slterms:os-version>
+    <slterms:os-arch>i486</slterms:os-arch>
+
+    <slterms:deprecated>security issue with app</slterms:deprecated>
+
+    <ex:other-info>additional metadata</ex:other-info>
+    <ex:yet-more>still more info</ex:yet-more>
+
+    <ex:relatedImages rdf:parseType="Resource">
+      <dcterms:identifier>MMZu9WvwKIro-rtBQfDk4PsKO7_</dcterms:identifier>
+      <dcterms:identifier>NMZu9WvwKIro-rtBQfDk4PsKO7_</dcterms:identifier>
+      <dcterms:identifier>OMZu9WvwKIro-rtBQfDk4PsKO7_</dcterms:identifier>
+      <dcterms:identifier>PMZu9WvwKIro-rtBQfDk4PsKO7_</dcterms:identifier>
+    </ex:relatedImages>
+  </rdf:Description>
+</rdf:RDF>
+```
+
+<table>
+    <th>
+        <td>Prefix</td>
+        <td>Namespace</td>
+    </th>
+    <tr>
+        <td>rdf</td>
+        <td>http://www.w3.org/1999/02/22-rdf-syntax-ns#</td>
+    </tr>
+    <tr>
+        <td>dcterms</td>
+        <td>http://purl.org/dc/terms/</td>
+    </tr>
+    <tr>
+        <td>slreq</td>
+        <td>http://mp.stratuslab.eu/slreq#</td>
+    </tr>
+    <tr>
+        <td>slterms</td>
+        <td>http://mp.stratuslab.eu/slterms# </td>
+    </tr>
+</table>
+
+The entries in the Marketplace deal with individual images. If it is desired
+that collections of images are signed, then one possibility is to include in
+each individual entry references to the other image descriptions in the
+collection. This allows the full collection to be reconstructed from any
+individual entry. One method of doing this is shown in the example metadata
+description.
+
+Signing and Validating StratusLab Metadata Files
+------------------------------------------------
+
+For signing and validating metadata files we are using [XML Signature][xmlsig]
+specification. Commands to support metadata signatures have been written in
+Java as recent Java virtual machines contain an API implementing this
+standard.
+
+Metadata files can be signed using grid certificates (in PKCS12 format), PGP
+key pairs, or DSA/RSA key pairs. Verification and validation automatically
+detects signature algorithm and type of private key used for signing metadata
+files, verifies the metadata file and prints, for grid certificates, the DN of
+the user who signed the metadata file.
+
+Metadata Elements
+-----------------
+
+Where possible the [Dublin Core metadata vocabulary][dublincore] has been used
+for the metadata description. The following table shows the terms taken from
+the Dublin Core specification.
+
+|||
+
+Additional terms have been defined by StratusLab to complete the metadata
+description. The following table shows those terms.
+
+|||
+
+Additional terms can be added to the metadata descriptions, but they should
+appear in their own XML namespaces. This allows for application-specific
+metadata and also evolution of the standard schema. These should appear after
+the endorsement element in the description.
+
+
 License
 -------
 
@@ -30,3 +180,8 @@ This software originated in the StratusLab project that was co-funded
 by the European Community’s Seventh Framework Programme (Capacities)
 Grant Agreement INFSO-RI-261552 and that ran from June 2010 to May
 2012.
+
+[rdfxml]: http://www.w3.org/TR/2004/ REC-rdf-syntax-grammar-20040210/
+[xmlsig]: http://www.w3.org/TR/2008/REC-xmldsig-core-20080610/
+
+
