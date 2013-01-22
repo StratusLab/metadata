@@ -323,6 +323,95 @@ description. The following table shows those terms.
         <td></td>
         <td>certificate issuer</td>
     </tr>
+    
+    <tr>
+        <td>slterms</td>
+        <td>location</td>
+        <td>*</td>
+        <td>URI</td>
+        <td></td>
+        <td>location hint for download (none if unavailable)</td>
+    </tr>    
+    <tr>
+        <td>slterms</td>
+        <td>serial-number</td>
+        <td>?</td>
+        <td>non-negative integer</td>
+        <td></td>
+        <td>numeric index of image within a series</td>
+    </tr>    
+    <tr>
+        <td>slterms</td>
+        <td>version</td>
+        <td>?</td>
+        <td>string</td>
+        <td></td>
+        <td>version of the image</td>
+    </tr>    
+    <tr>
+        <td>slterms</td>
+        <td>hypervisor</td>
+        <td>?</td>
+        <td>string</td>
+        <td></td>
+        <td>appropriate hypervisors for machine image</td>
+    </tr>    
+    <tr>
+        <td>slterms</td>
+        <td>inbound-port</td>
+        <td>*</td>
+        <td>unsigned short</td>
+        <td>0 for all</td>
+        <td>required inbound port</td>
+    </tr>    
+    <tr>
+        <td>slterms</td>
+        <td>outbound-port</td>
+        <td>*</td>
+        <td>unsigned short</td>
+        <td>0 for all</td>
+        <td>required outbound port</td>
+    </tr>    
+    <tr>
+        <td>slterms</td>
+        <td>icmp</td>
+        <td>*</td>
+        <td>unsigned byte</td>
+        <td></td>
+        <td>ICMP packet types</td>
+    </tr>    
+    <tr>
+        <td>slterms</td>
+        <td>os-arch</td>
+        <td>?</td>
+        <td>string</td>
+        <td></td>
+        <td>OS architecture</td>
+    </tr>    
+    <tr>
+        <td>slterms</td>
+        <td>os-version</td>
+        <td>?</td>
+        <td>string</td>
+        <td></td>
+        <td>OS version</td>
+    </tr>    
+    <tr>
+        <td>slterms</td>
+        <td>os</td>
+        <td>?</td>
+        <td>string</td>
+        <td></td>
+        <td>OS</td>
+    </tr>    
+    <tr>
+        <td>slterms</td>
+        <td>deprecated</td>
+        <td>?</td>
+        <td>string</td>
+        <td></td>
+        <td>reason that image is deprecated (missing if OK)</td>
+    </tr>    
 </table>
 
 Additional terms can be added to the metadata descriptions, but they should
