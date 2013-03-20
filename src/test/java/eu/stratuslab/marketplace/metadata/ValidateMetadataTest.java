@@ -8,7 +8,7 @@ public class ValidateMetadataTest {
     @Test
     public void checkValidDocuments() {
 
-        String[] names = { "valid-minimal.xml", "valid-full.xml" };
+        String[] names = { "valid-minimal.xml", "valid-full.xml", "valid-full-alt-cimi.xml" };
 
         for (String name : names) {
             Document doc = readDocument(name);
