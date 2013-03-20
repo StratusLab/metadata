@@ -13,42 +13,42 @@ import eu.stratuslab.marketplace.XMLUtils;
 
 public class TestUtils {
 
-    public static Document readResourceDocument(Class<?> c, String name) {
+  public static Document readResourceDocument(Class<?> c, String name) {
 
-        Document doc = null;
+    Document doc = null;
 
-        InputStream is = null;
+    InputStream is = null;
+    try {
+
+      is = c.getResourceAsStream(name);
+
+      DocumentBuilder db = XMLUtils.newDocumentBuilder(false);
+      doc = db.parse(is);
+
+    } catch (SAXException e) {
+      doc = null;
+      e.printStackTrace();
+
+    } catch (IOException e) {
+      doc = null;
+      e.printStackTrace();
+
+    } finally {
+      if (is != null) {
         try {
+          is.close();
+        } catch (IOException consumed) {
 
-            is = c.getResourceAsStream(name);
-
-            DocumentBuilder db = XMLUtils.newDocumentBuilder(false);
-            doc = db.parse(is);
-
-        } catch (SAXException e) {
-            doc = null;
-            e.printStackTrace();
-
-        } catch (IOException e) {
-            doc = null;
-            e.printStackTrace();
-
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException consumed) {
-
-                }
-            }
         }
-
-        return doc;
+      }
     }
 
-    @Test
-    public void ensureSchemaInitializationWorks() {
-        // Dummy test to keep maven happy.
-    }
+    return doc;
+  }
+
+  @Test
+  public void ensureSchemaInitializationWorks() {
+    // Dummy test to keep maven happy.
+  }
 
 }

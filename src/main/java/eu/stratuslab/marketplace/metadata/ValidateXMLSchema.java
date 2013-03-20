@@ -15,59 +15,58 @@ import org.xml.sax.SAXException;
 
 public final class ValidateXMLSchema {
 
-    private static final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
+  private static final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
 
-    private static final String[] XSD_FILES = { "xml.xsd", "dcmitype.xsd",
-            "dc.xsd", "dcterms.xsd", "slreq.xsd", "image-metadata.xsd",
-            "slterms.xsd" };
+  private static final String[] XSD_FILES = { "xml.xsd", "dcmitype.xsd",
+      "dc.xsd", "dcterms.xsd", "slreq.xsd", "image-metadata.xsd", "slterms.xsd" };
 
-    public static final Schema SCHEMA;
+  public static final Schema SCHEMA;
 
-    static {
+  static {
 
-        try {
+    try {
 
-            SchemaFactory factory = SchemaFactory.newInstance(W3C_XML_SCHEMA);
+      SchemaFactory factory = SchemaFactory.newInstance(W3C_XML_SCHEMA);
 
-            Source[] sources = new Source[XSD_FILES.length];
+      Source[] sources = new Source[XSD_FILES.length];
 
-            for (int i = 0; i < XSD_FILES.length; i++) {
-                InputStream is;
-                is = ValidateXMLSchema.class.getResourceAsStream(XSD_FILES[i]);
-                sources[i] = new StreamSource(is);
-            }
+      for (int i = 0; i < XSD_FILES.length; i++) {
+        InputStream is;
+        is = ValidateXMLSchema.class.getResourceAsStream(XSD_FILES[i]);
+        sources[i] = new StreamSource(is);
+      }
 
-            SCHEMA = factory.newSchema(sources);
+      SCHEMA = factory.newSchema(sources);
 
-        } catch (SAXException e) {
-            throw new ExceptionInInitializerError(e);
-        }
-
+    } catch (SAXException e) {
+      throw new ExceptionInInitializerError(e);
     }
 
-    private ValidateXMLSchema() {
+  }
 
+  private ValidateXMLSchema() {
+
+  }
+
+  public static void validate(Document doc) {
+
+    Validator validator = SCHEMA.newValidator();
+
+    Source source = new DOMSource(doc);
+
+    try {
+
+      validator.validate(source);
+
+    } catch (SAXException e) {
+      throw new MetadataException("XML schema validation exception: "
+          + e.getMessage());
+
+    } catch (IOException e) {
+      throw new MetadataException("IO exception during schema validation: "
+          + e.getMessage());
     }
 
-    public static void validate(Document doc) {
-
-        Validator validator = SCHEMA.newValidator();
-
-        Source source = new DOMSource(doc);
-
-        try {
-
-            validator.validate(source);
-
-        } catch (SAXException e) {
-            throw new MetadataException("XML schema validation exception: "
-                    + e.getMessage());
-
-        } catch (IOException e) {
-            throw new MetadataException(
-                    "IO exception during schema validation: " + e.getMessage());
-        }
-
-    }
+  }
 
 }

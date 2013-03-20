@@ -43,6 +43,7 @@ import org.w3c.dom.NodeList;
 import eu.stratuslab.marketplace.X509Info;
 import eu.stratuslab.marketplace.X509Utils;
 
+@SuppressWarnings("restriction")
 public final class MetadataUtils {
 
     private static final int BUFFER_SIZE = 1024;
@@ -219,7 +220,7 @@ public final class MetadataUtils {
         }
     }
 
-    private static DOMValidateContext createContext(Node signatureXml) {
+	private static DOMValidateContext createContext(Node signatureXml) {
         DOMValidateContext context = new DOMValidateContext(
                 new X509KeySelector(), signatureXml);
 

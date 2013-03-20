@@ -15,90 +15,91 @@ import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import javax.xml.crypto.dsig.keyinfo.X509Data;
 
+@SuppressWarnings("restriction")
 public class X509KeySelector extends KeySelector {
 
-    public KeySelectorResult select(KeyInfo keyInfo,
-            KeySelector.Purpose purpose, AlgorithmMethod method,
-            XMLCryptoContext context) throws KeySelectorException {
+  public KeySelectorResult select(KeyInfo keyInfo, KeySelector.Purpose purpose,
+      AlgorithmMethod method, XMLCryptoContext context)
+      throws KeySelectorException {
 
-        PublicKey key = null;
+    PublicKey key = null;
 
-        for (Object oinfo : keyInfo.getContent()) {
+    for (Object oinfo : keyInfo.getContent()) {
 
-            key = extractX509Key(oinfo);
+      key = extractX509Key(oinfo);
 
-            if (key == null) {
-                key = extractKeyValue(oinfo);
-            }
+      if (key == null) {
+        key = extractKeyValue(oinfo);
+      }
 
-            if (key != null && compatibleAlgorithms(method, key)) {
-                return new SimpleKeySelectorResult(key);
-            }
-        }
-
-        throw new KeySelectorException("No key found!");
+      if (key != null && compatibleAlgorithms(method, key)) {
+        return new SimpleKeySelectorResult(key);
+      }
     }
 
-    private static PublicKey extractKeyValue(Object oinfo) {
+    throw new KeySelectorException("No key found!");
+  }
 
-        PublicKey key = null;
+  private static PublicKey extractKeyValue(Object oinfo) {
 
-        if (oinfo instanceof KeyValue) {
-            try {
-                KeyValue kv = (KeyValue) oinfo;
-                key = kv.getPublicKey();
-            } catch (KeyException consumed) {
-                key = null;
-            }
-        }
+    PublicKey key = null;
 
-        return key;
+    if (oinfo instanceof KeyValue) {
+      try {
+        KeyValue kv = (KeyValue) oinfo;
+        key = kv.getPublicKey();
+      } catch (KeyException consumed) {
+        key = null;
+      }
     }
 
-    private static PublicKey extractX509Key(Object info) {
+    return key;
+  }
 
-        PublicKey key = null;
+  private static PublicKey extractX509Key(Object info) {
 
-        if (info instanceof X509Data) {
+    PublicKey key = null;
 
-            X509Data x509Data = (X509Data) info;
+    if (info instanceof X509Data) {
 
-            for (Object o : x509Data.getContent()) {
-                if (o instanceof X509Certificate) {
-                    key = ((X509Certificate) o).getPublicKey();
-                }
-            }
+      X509Data x509Data = (X509Data) info;
 
+      for (Object o : x509Data.getContent()) {
+        if (o instanceof X509Certificate) {
+          key = ((X509Certificate) o).getPublicKey();
         }
-        return key;
+      }
+
+    }
+    return key;
+  }
+
+  private static boolean compatibleAlgorithms(AlgorithmMethod method,
+      PublicKey key) {
+
+    String algURI = method.getAlgorithm();
+    String algName = key.getAlgorithm();
+
+    boolean bothDSA = (algName.equalsIgnoreCase("DSA") && algURI
+        .equalsIgnoreCase(SignatureMethod.DSA_SHA1));
+
+    boolean bothRSA = (algName.equalsIgnoreCase("RSA") && algURI
+        .equalsIgnoreCase(SignatureMethod.RSA_SHA1));
+
+    return (bothDSA || bothRSA);
+  }
+
+  private static class SimpleKeySelectorResult implements KeySelectorResult {
+
+    private PublicKey pk;
+
+    SimpleKeySelectorResult(PublicKey pk) {
+      this.pk = pk;
     }
 
-    private static boolean compatibleAlgorithms(AlgorithmMethod method,
-            PublicKey key) {
-
-        String algURI = method.getAlgorithm();
-        String algName = key.getAlgorithm();
-
-        boolean bothDSA = (algName.equalsIgnoreCase("DSA") && algURI
-                .equalsIgnoreCase(SignatureMethod.DSA_SHA1));
-
-        boolean bothRSA = (algName.equalsIgnoreCase("RSA") && algURI
-                .equalsIgnoreCase(SignatureMethod.RSA_SHA1));
-
-        return (bothDSA || bothRSA);
+    public Key getKey() {
+      return pk;
     }
-
-    private static class SimpleKeySelectorResult implements KeySelectorResult {
-
-        private PublicKey pk;
-
-        SimpleKeySelectorResult(PublicKey pk) {
-            this.pk = pk;
-        }
-
-        public Key getKey() {
-            return pk;
-        }
-    }
+  }
 
 }

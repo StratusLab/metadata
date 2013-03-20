@@ -37,151 +37,151 @@ import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 
 import org.w3c.dom.Document;
 
+@SuppressWarnings("restriction")
 public final class X509Utils {
 
-    private X509Utils() {
+  private X509Utils() {
 
-    }
+  }
 
-    public static KeyStore pkcs12ToKeyStore(File file, String password)
-            throws FileNotFoundException {
+  public static KeyStore pkcs12ToKeyStore(File file, String password)
+      throws FileNotFoundException {
 
-        return pkcs12ToKeyStore(new FileInputStream(file), password);
+    return pkcs12ToKeyStore(new FileInputStream(file), password);
 
-    }
+  }
 
-    public static KeyStore pkcs12ToKeyStore(InputStream is, String password) {
+  public static KeyStore pkcs12ToKeyStore(InputStream is, String password) {
 
+    try {
+
+      char[] pwchars = password.toCharArray();
+
+      KeyStore ks = KeyStore.getInstance("PKCS12");
+      ks.load(is, pwchars);
+
+      return ks;
+
+    } catch (CertificateException e) {
+      throw new RuntimeException(e);
+    } catch (KeyStoreException e) {
+      throw new RuntimeException(e);
+    } catch (NoSuchAlgorithmException e) {
+      throw new RuntimeException(e);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    } finally {
+      if (is != null) {
         try {
-
-            char[] pwchars = password.toCharArray();
-
-            KeyStore ks = KeyStore.getInstance("PKCS12");
-            ks.load(is, pwchars);
-
-            return ks;
-
-        } catch (CertificateException e) {
-            throw new RuntimeException(e);
-        } catch (KeyStoreException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException consumed) {
-                }
-            }
+          is.close();
+        } catch (IOException consumed) {
         }
+      }
     }
+  }
 
-    public static X509Info x509FromKeyStore(KeyStore keyStore, String password) {
+  public static X509Info x509FromKeyStore(KeyStore keyStore, String password) {
 
-        try {
+    try {
 
-            char[] pwchars = password.toCharArray();
+      char[] pwchars = password.toCharArray();
 
-            X509Certificate cert = null;
-            Key key = null;
+      X509Certificate cert = null;
+      Key key = null;
 
-            Enumeration<String> aliases;
-            aliases = keyStore.aliases();
-            while (aliases.hasMoreElements()) {
-                String alias = aliases.nextElement();
+      Enumeration<String> aliases;
+      aliases = keyStore.aliases();
+      while (aliases.hasMoreElements()) {
+        String alias = aliases.nextElement();
 
-                key = keyStore.getKey(alias, pwchars);
+        key = keyStore.getKey(alias, pwchars);
 
-                if (key instanceof PrivateKey) {
-                    cert = (X509Certificate) keyStore.getCertificate(alias);
-                }
-            }
-
-            return new X509Info(cert, (PrivateKey) key);
-
-        } catch (KeyStoreException e) {
-            throw new RuntimeException(e);
-        } catch (UnrecoverableKeyException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+        if (key instanceof PrivateKey) {
+          cert = (X509Certificate) keyStore.getCertificate(alias);
         }
+      }
 
+      return new X509Info(cert, (PrivateKey) key);
+
+    } catch (KeyStoreException e) {
+      throw new RuntimeException(e);
+    } catch (UnrecoverableKeyException e) {
+      throw new RuntimeException(e);
+    } catch (NoSuchAlgorithmException e) {
+      throw new RuntimeException(e);
     }
 
-    public static void signDocument(X509Info x509Info, Document doc) {
+  }
 
-        try {
+  public static void signDocument(X509Info x509Info, Document doc) {
 
-            // Fully normalize the document before trying to sign it.
-            doc.normalizeDocument();
+    try {
 
-            XMLSignatureFactory factory = newXMLSignatureFactory();
+      // Fully normalize the document before trying to sign it.
+      doc.normalizeDocument();
 
-            SignedInfo si = newSignedInfo(factory);
+      XMLSignatureFactory factory = newXMLSignatureFactory();
 
-            KeyInfoFactory kif = factory.getKeyInfoFactory();
+      SignedInfo si = newSignedInfo(factory);
 
-            KeyPair kp = x509Info.getKeyPair();
-            KeyInfo ki = x509Info.getKeyInfo(kif);
+      KeyInfoFactory kif = factory.getKeyInfoFactory();
 
-            // Create a DOMSignContext and specify the RSA/DSA PrivateKey and
-            // location of the resulting XMLSignature's parent element
-            DOMSignContext dsc = new DOMSignContext(kp.getPrivate(), doc
-                    .getDocumentElement());
+      KeyPair kp = x509Info.getKeyPair();
+      KeyInfo ki = x509Info.getKeyInfo(kif);
 
-            // Create the XMLSignature (but don't sign it yet)
-            XMLSignature signature = factory.newXMLSignature(si, ki);
+      // Create a DOMSignContext and specify the RSA/DSA PrivateKey and
+      // location of the resulting XMLSignature's parent element
+      DOMSignContext dsc = new DOMSignContext(kp.getPrivate(),
+          doc.getDocumentElement());
 
-            // Marshal, generate (and sign) the enveloped signature
-            signature.sign(dsc);
+      // Create the XMLSignature (but don't sign it yet)
+      XMLSignature signature = factory.newXMLSignature(si, ki);
 
-        } catch (MarshalException e) {
-            throw new RuntimeException(e);
-        } catch (XMLSignatureException e) {
-            throw new RuntimeException(e);
-        }
+      // Marshal, generate (and sign) the enveloped signature
+      signature.sign(dsc);
 
+    } catch (MarshalException e) {
+      throw new RuntimeException(e);
+    } catch (XMLSignatureException e) {
+      throw new RuntimeException(e);
     }
 
-    private static XMLSignatureFactory newXMLSignatureFactory() {
-        return XMLSignatureFactory.getInstance("DOM");
+  }
+
+  private static XMLSignatureFactory newXMLSignatureFactory() {
+    return XMLSignatureFactory.getInstance("DOM");
+  }
+
+  private static SignedInfo newSignedInfo(XMLSignatureFactory factory) {
+
+    try {
+
+      DigestMethod method;
+      method = factory.newDigestMethod(DigestMethod.SHA1, null);
+      Transform transform = factory.newTransform(Transform.ENVELOPED,
+          (TransformParameterSpec) null);
+      List<Transform> transforms = Collections.singletonList(transform);
+
+      // Create a Reference to the enveloped document; in this case we are
+      // signing the whole document, so a URI of "" signifies that.
+      Reference ref = factory.newReference("", method, transforms, null, null);
+      List<Reference> refs = Collections.singletonList(ref);
+
+      CanonicalizationMethod cmethod = factory.newCanonicalizationMethod(
+          CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS,
+          (C14NMethodParameterSpec) null);
+
+      SignatureMethod smethod = factory.newSignatureMethod(
+          SignatureMethod.RSA_SHA1, null);
+
+      return factory.newSignedInfo(cmethod, smethod, refs);
+
+    } catch (NoSuchAlgorithmException e) {
+      throw new RuntimeException(e);
+    } catch (InvalidAlgorithmParameterException e) {
+      throw new RuntimeException(e);
     }
 
-    private static SignedInfo newSignedInfo(XMLSignatureFactory factory) {
-
-        try {
-
-            DigestMethod method;
-            method = factory.newDigestMethod(DigestMethod.SHA1, null);
-            Transform transform = factory.newTransform(Transform.ENVELOPED,
-                    (TransformParameterSpec) null);
-            List<Transform> transforms = Collections.singletonList(transform);
-
-            // Create a Reference to the enveloped document; in this case we are
-            // signing the whole document, so a URI of "" signifies that.
-            Reference ref = factory.newReference("", method, transforms, null,
-                    null);
-            List<Reference> refs = Collections.singletonList(ref);
-
-            CanonicalizationMethod cmethod = factory.newCanonicalizationMethod(
-                    CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS,
-                    (C14NMethodParameterSpec) null);
-
-            SignatureMethod smethod = factory.newSignatureMethod(
-                    SignatureMethod.RSA_SHA1, null);
-
-            return factory.newSignedInfo(cmethod, smethod, refs);
-
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } catch (InvalidAlgorithmParameterException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
+  }
 
 }
