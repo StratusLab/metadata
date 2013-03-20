@@ -15,45 +15,45 @@ import eu.stratuslab.marketplace.XMLUtils;
 
 public final class ValidateRDFModel {
 
-  private ValidateRDFModel() {
+    private ValidateRDFModel() {
 
-  }
-
-  public static void validate(Document doc) {
-
-    Reader reader = null;
-
-    try {
-
-      Document copy = (Document) doc.cloneNode(true);
-      MetadataUtils.stripSignatureElements(copy);
-
-      String rdfEntry = XMLUtils.documentToString(copy);
-      reader = new StringReader(rdfEntry);
-
-      RDFParser rdfParser = Rio.createParser(RDFFormat.RDFXML);
-
-      rdfParser.setRDFHandler(new RDFHandlerBase());
-
-      rdfParser.parse(reader, "http://example.org/metadata");
-
-    } catch (OpenRDFException e) {
-      throw new MetadataException(e.getMessage());
-    } catch (java.io.IOException e) {
-      throw new MetadataException(e.getMessage());
-    } finally {
-      closeReader(reader);
     }
-  }
 
-  public static void closeReader(Reader reader) {
-    if (reader != null) {
-      try {
-        reader.close();
-      } catch (IOException consumed) {
+    public static void validate(Document doc) {
 
-      }
+        Reader reader = null;
+
+        try {
+
+            Document copy = (Document) doc.cloneNode(true);
+            MetadataUtils.stripSignatureElements(copy);
+
+            String rdfEntry = XMLUtils.documentToString(copy);
+            reader = new StringReader(rdfEntry);
+
+            RDFParser rdfParser = Rio.createParser(RDFFormat.RDFXML);
+
+            rdfParser.setRDFHandler(new RDFHandlerBase());
+
+            rdfParser.parse(reader, "http://example.org/metadata");
+
+        } catch (OpenRDFException e) {
+            throw new MetadataException(e.getMessage());
+        } catch (java.io.IOException e) {
+            throw new MetadataException(e.getMessage());
+        } finally {
+            closeReader(reader);
+        }
     }
-  }
+
+    public static void closeReader(Reader reader) {
+        if (reader != null) {
+            try {
+                reader.close();
+            } catch (IOException consumed) {
+
+            }
+        }
+    }
 
 }

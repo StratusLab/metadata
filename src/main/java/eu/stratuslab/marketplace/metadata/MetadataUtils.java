@@ -220,7 +220,7 @@ public final class MetadataUtils {
         }
     }
 
-	private static DOMValidateContext createContext(Node signatureXml) {
+    private static DOMValidateContext createContext(Node signatureXml) {
         DOMValidateContext context = new DOMValidateContext(
                 new X509KeySelector(), signatureXml);
 
@@ -242,22 +242,22 @@ public final class MetadataUtils {
 
         return signature;
     }
-      
-    public static KeyInfo extractKeyInfoFromNode(Node signature){
-    	DOMValidateContext context = createContext(signature);
+
+    public static KeyInfo extractKeyInfoFromNode(Node signature) {
+        DOMValidateContext context = createContext(signature);
         XMLSignature sig = null;
-        
-		try {
-			sig = extractXmlSignature(context);
-		} catch (MarshalException e) {
-			throw new MetadataException(e.getMessage());
-		}
+
+        try {
+            sig = extractXmlSignature(context);
+        } catch (MarshalException e) {
+            throw new MetadataException(e.getMessage());
+        }
 
         KeyInfo keyInfo = sig.getKeyInfo();
-        
+
         return keyInfo;
     }
-    
+
     public static X509Certificate extractX509CertFromKeyInfo(KeyInfo keyInfo) {
 
         List<X509Certificate> certs = extractX509CertChainFromKeyInfo(keyInfo);
