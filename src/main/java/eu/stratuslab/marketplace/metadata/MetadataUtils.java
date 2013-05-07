@@ -34,6 +34,7 @@ import javax.xml.crypto.dsig.dom.DOMValidateContext;
 import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import javax.xml.crypto.dsig.keyinfo.X509Data;
 
+import org.omg.CORBA_2_3.portable.OutputStream;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -95,6 +96,11 @@ public final class MetadataUtils {
     }
 
     public static Map<String, BigInteger> streamInfo(InputStream is) {
+        return copyWithStreamInfo(is, null);
+    }
+
+    public static Map<String, BigInteger> copyWithStreamInfo(InputStream is,
+            OutputStream os) {
 
         BigInteger bytes = BigInteger.ZERO;
 
@@ -120,6 +126,9 @@ public final class MetadataUtils {
                 bytes = bytes.add(BigInteger.valueOf(length));
                 for (MessageDigest md : mds) {
                     md.update(buffer, 0, length);
+                    if (os != null) {
+                        os.write(buffer, 0, length);
+                    }
                 }
             }
 
@@ -130,7 +139,7 @@ public final class MetadataUtils {
             }
 
         } catch (IOException consumed) {
-            // Do nothing.
+
         }
 
         return results;
