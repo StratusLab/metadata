@@ -4,6 +4,7 @@ import static eu.stratuslab.marketplace.metadata.MetadataNamespaceContext.DCTERM
 import static eu.stratuslab.marketplace.metadata.MetadataNamespaceContext.RDF_NS_URI;
 import static eu.stratuslab.marketplace.metadata.MetadataNamespaceContext.SLREQ_NS_URI;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,6 +13,10 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
@@ -93,10 +98,6 @@ public final class MetadataUtils {
 
 		// Sign the document. The document is directly modified by method.
 		X509Utils.signDocument(x509Info, doc);
-	}
-
-	public static Map<String, BigInteger> streamInfo(InputStream is) throws IOException {
-		return copyWithStreamInfo(is, null);
 	}
 
 	public static Map<String, BigInteger> copyWithStreamInfo(InputStream is,
@@ -493,6 +494,84 @@ public final class MetadataUtils {
 		doc.normalizeDocument();
 	}
 
+    public static Map<String, BigInteger> streamInfo(InputStream is) {
+        return copyWithStreamInfo(is, (FileOutputStream) null);
+    }
+
+    public static Map<String, BigInteger> copyWithStreamInfo(InputStream is,
+            FileOutputStream os) {
+
+        BigInteger bytes = BigInteger.ZERO;
+
+        Map<String, BigInteger> results = new HashMap<String, BigInteger>();
+        results.put("BYTES", bytes);
+
+        ArrayList<MessageDigest> mds = new ArrayList<MessageDigest>();
+        for (String algorithm : ALGORITHMS) {
+            try {
+                mds.add(MessageDigest.getInstance(algorithm));
+            } catch (NoSuchAlgorithmException consumed) {
+                // Do nothing.
+            }
+        }
+
+        ReadableByteChannel inputChannel = null;
+        FileChannel outputChannel = null;
+
+        try {
+            inputChannel = Channels.newChannel(is);
+            if (os != null) {
+                outputChannel = os.getChannel();
+            }
+
+            ByteBuffer bbuffer = ByteBuffer.allocateDirect(BUFFER_SIZE);
+
+            long size = 0L;
+            int nbytes = inputChannel.read(bbuffer);
+            while (nbytes >= 0) {
+
+                if (outputChannel != null) {
+                    bbuffer.flip();
+
+                    // FIXME: The number of bytes written is not checked.
+                    outputChannel.write(bbuffer);
+                }
+
+                size += nbytes;
+                for (MessageDigest md : mds) {
+                    bbuffer.flip();
+                    md.update(bbuffer);
+                }
+
+                bbuffer.clear();
+                nbytes = inputChannel.read(bbuffer);
+            }
+
+            // Attempt to explicitly truncate the file to the given number
+            // of transferred bytes.
+            try {
+                if (outputChannel != null) {
+                    outputChannel.truncate(size);
+                }
+            } catch (IOException consumed) {
+            }
+
+            // Set the stream info statistics.
+            results.put("BYTES", BigInteger.valueOf(size));
+            for (MessageDigest md : mds) {
+                results.put(md.getAlgorithm(), new BigInteger(1, md.digest()));
+            }
+
+        } catch (IOException consumed) {
+
+        } finally {
+            closeIgnoringError(inputChannel);
+            closeIgnoringError(outputChannel);
+        }
+
+        return results;
+    }
+
 	public static boolean isValidEmailAddress(String email) {
 
 		try {
@@ -525,5 +604,14 @@ public final class MetadataUtils {
 		e.setTextContent(datetime);
 		return e;
 	}
+
+    private static void closeIgnoringError(Closeable c) {
+        try {
+            if (c != null) {
+                c.close();
+            }
+        } catch (IOException consumed) {
+        }
+    }
 
 }
