@@ -52,7 +52,7 @@ import eu.stratuslab.marketplace.X509Utils;
 @SuppressWarnings("restriction")
 public final class MetadataUtils {
 
-	private static final int BUFFER_SIZE = 1024;
+	private static final int BUFFER_SIZE = 16 * 1024;
 
 	private static final String[] ALGORITHMS = { "MD5", "SHA-1", "SHA-256",
 			"SHA-512" };
