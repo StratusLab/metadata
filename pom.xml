@@ -41,7 +41,7 @@ and configure the associated images.
 	<enabled>true</enabled>
       </releases>
       <snapshots>
-	<enabled>false</enabled>
+	<enabled>true</enabled>
       </snapshots>
       <id>POMReleases</id>
       <name>POM Releases</name>
