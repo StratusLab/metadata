@@ -4,7 +4,7 @@
 
   <groupId>eu.stratuslab.metadata</groupId>
   <artifactId>metadata</artifactId>
-  <version>13.10.1-SNAPSHOT</version>
+  <version>13.12.0-SNAPSHOT</version>
   <name>Metadata (JAR)</name>
 
   <url>https://github.com/StratusLab/metadata</url>
@@ -21,7 +21,7 @@ and configure the associated images.
   <parent>
     <groupId>eu.stratuslab</groupId>
     <artifactId>distribution</artifactId>
-    <version>13.10.0</version>
+    <version>13.12.0-SNAPSHOT</version>
   </parent>
 
   <issueManagement>
