@@ -4,7 +4,7 @@
 
   <groupId>eu.stratuslab.metadata</groupId>
   <artifactId>metadata</artifactId>
-  <version>13.12.0</version>
+  <version>13.12.1-SNAPSHOT</version>
   <name>Metadata (JAR)</name>
 
   <url>https://github.com/StratusLab/metadata</url>
@@ -32,7 +32,7 @@ and configure the associated images.
   <scm>
     <connection>scm:git:ssh://git@github.com/StratusLab/metadata.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/StratusLab/metadata.git</developerConnection>
-    <tag>metadata-13.12.0</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <repositories>
