@@ -23,6 +23,7 @@ import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -148,7 +149,7 @@ public final class MetadataUtils {
 		System.out.flush();
 
 		for (MessageDigest md : mds) {
-			System.out.println(">>> MD for " + md.getAlgorithm() + " digest: " + md.digest());
+                    System.out.println(">>> MD for " + md.getAlgorithm() + " digest: " + Arrays.toString(md.digest()));
 			System.out.flush();
 			results.put(md.getAlgorithm(), new BigInteger(1, md.digest()));
 		}

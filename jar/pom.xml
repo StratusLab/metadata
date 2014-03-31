@@ -43,7 +43,7 @@
 
     <plugins>
 
-<!--       <plugin>
+       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>findbugs-maven-plugin</artifactId>
         <configuration>
@@ -59,7 +59,7 @@
           </execution>
         </executions>
       </plugin>
- -->    </plugins>
+    </plugins>
     
   </build>
 
