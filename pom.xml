@@ -3,9 +3,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>eu.stratuslab.metadata</groupId>
-  <artifactId>metadata</artifactId>
+  <artifactId>metadata-parent</artifactId>
   <version>14.06.0-SNAPSHOT</version>
-  <name>Metadata (JAR)</name>
+  <name>Metadata (ROOT)</name>
 
   <url>https://github.com/StratusLab/metadata</url>
 
@@ -16,13 +16,18 @@ Marketplace and used by various cloud services to validate, authorize,
 and configure the associated images.
 </description>
 
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
 
   <parent>
     <groupId>eu.stratuslab</groupId>
     <artifactId>distribution</artifactId>
     <version>14.06.0-SNAPSHOT</version>
   </parent>
+
+  <modules>
+    <module>jar</module>
+    <module>fatjar</module>
+  </modules>
 
   <issueManagement>
     <system>GitHub Issues</system>
@@ -62,72 +67,5 @@ and configure the associated images.
     </repository>
 
   </repositories>
-
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk16</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.mail</groupId>
-      <artifactId>mail</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.openrdf.sesame</groupId>
-      <artifactId>sesame-rio-rdfxml</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-    </dependency>
-  </dependencies>
-
-  <build>
-
-    <plugins>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-          </descriptorRefs>
-        </configuration>
-        <executions>
-          <execution>
-            <id>make-assembly</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-<!--       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>findbugs-maven-plugin</artifactId>
-        <configuration>
-          <excludeFilterFile>${basedir}/src/test/findbugs/findbugs-exclude.xml</excludeFilterFile>
-        </configuration>
-        <executions>
-          <execution>
-            <id>run-findbugs</id>
-            <phase>process-classes</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
- -->    </plugins>
-    
-  </build>
 
 </project>
