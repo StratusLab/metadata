@@ -4,7 +4,7 @@
 
   <groupId>eu.stratuslab.metadata</groupId>
   <artifactId>metadata-parent</artifactId>
-  <version>14.06.1.RC1-SNAPSHOT</version>
+  <version>14.06.0_RC3-SNAPSHOT</version>
   <name>Metadata (ROOT)</name>
 
   <url>https://github.com/StratusLab/metadata</url>
@@ -21,7 +21,7 @@ and configure the associated images.
   <parent>
     <groupId>eu.stratuslab</groupId>
     <artifactId>distribution</artifactId>
-    <version>14.06.0.RC1</version>
+    <version>14.06.0_RC3</version>
   </parent>
 
   <modules>
