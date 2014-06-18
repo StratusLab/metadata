@@ -4,7 +4,7 @@
 
   <groupId>eu.stratuslab.metadata</groupId>
   <artifactId>metadata-parent</artifactId>
-  <version>14.06.0_RC5-SNAPSHOT</version>
+  <version>14.06.0_RC5</version>
   <name>Metadata (ROOT)</name>
 
   <url>https://github.com/StratusLab/metadata</url>
@@ -37,7 +37,7 @@ and configure the associated images.
   <scm>
     <connection>scm:git:ssh://git@github.com/StratusLab/metadata.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/StratusLab/metadata.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>metadata-parent-14.06.0_RC5</tag>
   </scm>
 
   <repositories>
