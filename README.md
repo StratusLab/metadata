@@ -153,7 +153,7 @@ the Dublin Core specification.
         <th>NS</th>
         <th>qname</th>
         <th>freq.</th>
-        <th>XSD></th>
+        <th>XSD</th>
         <th>Constraints</th>
         <th>Notes</th>
     </tr>
@@ -263,7 +263,7 @@ description. The following table shows those terms.
         <th>NS</th>
         <th>qname</th>
         <th>freq.</th>
-        <th>XSD></th>
+        <th>XSD</th>
         <th>Constraints</th>
         <th>Notes</th>
     </tr>
