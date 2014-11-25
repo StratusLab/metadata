@@ -326,6 +326,14 @@ description. The following table shows those terms.
     
     <tr>
         <td>slterms</td>
+        <td>disks-bus</td>
+        <td>*</td>
+        <td>string</td>
+        <td></td>
+        <td>value to use for disk device driver</td>
+    </tr>    
+    <tr>
+        <td>slterms</td>
         <td>location</td>
         <td>*</td>
         <td>URI</td>
