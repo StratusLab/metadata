@@ -126,10 +126,10 @@ public final class MetadataUtils {
 		System.out.println(">>> PROCESSING ...");
 		System.out.flush();
 		for (int length = is.read(buffer); length > 0; length = is.read(buffer)) {
-			
+
 			System.out.println(">>> read from Input Stream ..." + length);
 			System.out.flush();
-			
+
 			bytes = bytes.add(BigInteger.valueOf(length));
 			for (MessageDigest md : mds) {
 				md.update(buffer, 0, length);
@@ -570,6 +570,89 @@ public final class MetadataUtils {
         }
 
         return results;
+    }
+
+    public static Map<String, BigInteger> copyWithStreamInfo(InputStream is,
+    		List<FileOutputStream> oss, int bufferSize) {
+
+    	BigInteger bytes = BigInteger.ZERO;
+
+    	Map<String, BigInteger> results = new HashMap<String, BigInteger>();
+    	results.put("BYTES", bytes);
+
+    	ArrayList<MessageDigest> mds = new ArrayList<MessageDigest>();
+    	for (String algorithm : ALGORITHMS) {
+    		try {
+    			mds.add(MessageDigest.getInstance(algorithm));
+    		} catch (NoSuchAlgorithmException consumed) {
+    			// Do nothing.
+    		}
+    	}
+
+    	ReadableByteChannel inputChannel = null;
+    	List<FileChannel> outputChannels = new ArrayList<FileChannel>();
+
+    	try {
+    		inputChannel = Channels.newChannel(is);
+    		if (oss != null) {
+    			for (FileOutputStream os : oss) {
+    				outputChannels.add(os.getChannel());
+    			}
+    		}
+
+			ByteBuffer bbuffer = (bufferSize != 0) ? ByteBuffer.allocateDirect(bufferSize) :
+				ByteBuffer.allocateDirect(BUFFER_SIZE);
+
+    		long size = 0L;
+    		int nbytes = inputChannel.read(bbuffer);
+    		while (nbytes >= 0) {
+
+    			if (outputChannels != null) {
+
+    				// FIXME: The number of bytes written is not checked.
+    				for (FileChannel oc : outputChannels) {
+    					bbuffer.flip();
+    					oc.write(bbuffer);
+    				}
+    			}
+
+    			size += nbytes;
+    			for (MessageDigest md : mds) {
+    				bbuffer.flip();
+    				md.update(bbuffer);
+    			}
+
+    			bbuffer.clear();
+    			nbytes = inputChannel.read(bbuffer);
+    		}
+
+    		// Attempt to explicitly truncate the file to the given number
+    		// of transferred bytes.
+    		try {
+    			for (FileChannel oc : outputChannels) {
+        			if (oc != null) {
+        				oc.truncate(size);
+        			}
+    			}
+    		} catch (IOException consumed) {
+    		}
+
+    		// Set the stream info statistics.
+    		results.put("BYTES", BigInteger.valueOf(size));
+    		for (MessageDigest md : mds) {
+    			results.put(md.getAlgorithm(), new BigInteger(1, md.digest()));
+    		}
+
+    	} catch (IOException consumed) {
+
+    	} finally {
+    		closeIgnoringError(inputChannel);
+    		for (FileChannel oc : outputChannels) {
+    			closeIgnoringError(oc);
+    		}
+    	}
+
+    	return results;
     }
 
 	public static boolean isValidEmailAddress(String email) {
